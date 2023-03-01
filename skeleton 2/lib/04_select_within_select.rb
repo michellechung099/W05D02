@@ -95,11 +95,25 @@ def population_constraint
   # Poland? Show the name and the population.
   execute(<<-SQL)
   select
-    name
+    name, population
   from
     countries
   where
-    population <
+    population > (
+      select
+        population
+      from
+        countries
+      where
+        name='Canada'
+    ) and population < (
+      select
+        population
+      from
+        countries
+      where
+        name='Poland'
+    );
 
   SQL
 end
@@ -110,5 +124,18 @@ def sparse_continents
   # population.
   # Hint: Sometimes rewording the problem can help you see the solution.
   execute(<<-SQL)
+    select
+      name, continent, population
+    from
+      countries
+    where
+      NOT continent IN (
+        select
+          continent
+        from
+          countries
+        where
+          population > 25000000
+      );
   SQL
 end
